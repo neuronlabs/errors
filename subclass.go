@@ -22,7 +22,7 @@ type Minor uint16
 
 // Valid checks if the Minor is valid.
 func (m Minor) Valid() bool {
-	return m>>minorBitSize == 0 && m != 0
+	return m>>minorBitSize == 0 && m&maxMinorValue != 0
 }
 
 // NewMinor creates new Minor error classification
@@ -50,7 +50,7 @@ type Index uint16
 
 // Valid checks if the provided index is valid.
 func (i Index) Valid() bool {
-	return i>>indexBitSize == 0 || i&maxIndexValue != 0
+	return i>>indexBitSize == 0 && i&maxIndexValue != 0
 }
 
 // NewIndex creates new Index for the 'mjr' Major and 'mnr' Minor.

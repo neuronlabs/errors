@@ -7,12 +7,13 @@ const (
 
 	maxIndexValue = (2 << (indexBitSize - 1)) - 1
 	maxMinorValue = (2 << (minorBitSize - 1)) - 1
-	maxMajorValue = (2 << (majorBitSize - 1)) - 1
-
-	majorMinorMask = uint32((2<<(majorBitSize+minorBitSize-1) - 1) << indexBitSize)
 )
 
 func init() {
+	initClasses()
+}
+
+func initClasses() {
 	internalMajor := container.newMajor()
 
 	invalidMajor, _ := container.newMinor(internalMajor)
@@ -66,11 +67,6 @@ func (c Class) Minor() Minor {
 	return c.minor()
 }
 
-// MjrMnrMasked returns the class value masked by the major and minor value only.
-func (c Class) MjrMnrMasked() uint32 {
-	return uint32(c) & majorMinorMask
-}
-
 func (c Class) index() Index {
 	return Index(c & maxIndexValue)
 }
@@ -92,7 +88,7 @@ func NewClass(mjr Major, mnr Minor, index Index) (Class, error) {
 // MustNewClass gets new class from the provided 'minor' and 'index'.
 // Panics if any of the arguments is not valid or out of bands.
 func MustNewClass(mjr Major, mnr Minor, index Index) Class {
-	c, err := NewClass(mjr, mnr, index)
+	c, err := newClass(mjr, mnr, index)
 	if err != nil {
 		panic(err)
 	}

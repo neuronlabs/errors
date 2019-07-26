@@ -41,21 +41,26 @@ Use `NewMajor` or `MustNewMajor` functions to create `Major`, `NewMinor` or `Mus
 The package provides simple error handling interfaces and functions.
 It allows to create simple and detailed classified errors.
 
-### ClassError
+## ClassError
 
 A `ClassError` is the interface that allow provides error that returns `Class`.
 
-### DetailedError
+## DetailedError
 
-`DetailedError` is the interface used for errors that stores and handles human readable details.
+`DetailedError` is the interface used for errors that stores and handles human readable details, contains it's instance id and runtime call operation.
+Implements `ClassError`, `Detailer`, `Operationer`, `Indexer`, `error` interfaces.
 
-### OperationError
+### Detailer
 
-`OperationError` is the interface used for errors that stores the runtime operation information.
+`Detailer` interface allows to set and get the human readable details - full sentences.
 
-### IndexedError
+### Operationer
 
-`IndexedError` is the interface for errors that stores 'ID' for each error instance.
+`OperationError` is the interface used to get the runtime operation information.
+
+### Indexer
+
+`Indexer` is the interface used to obtain 'ID' for each error instance.
 
 
 ## Error handling
@@ -92,7 +97,7 @@ func createValue(input int) error {
 
 ### Detailed Error
 
-The detailed error struct (`detailedError`) implements `DetailedError`, `IndexedError` and `OperationError` interfaces. 
+The detailed error struct (`detailedError`) implements `DetailedError`.
 
 It contains a lot of information about given error instance:
 

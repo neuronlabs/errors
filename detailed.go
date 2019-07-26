@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"strconv"
 
@@ -10,9 +11,11 @@ import (
 
 // compile time check for detailedError interfaces.
 var (
-	_ DetailedError  = &detailedError{}
-	_ OperationError = &detailedError{}
-	_ IndexedError   = &detailedError{}
+	_ ClassError    = &detailedError{}
+	_ Detailer      = &detailedError{}
+	_ Operationer   = &detailedError{}
+	_ Indexer       = &detailedError{}
+	_ DetailedError = &detailedError{}
 )
 
 // detailedError is the class based error definition.
@@ -59,7 +62,7 @@ func (e *detailedError) Details() string {
 
 // DetailedError implements error interface.
 func (e *detailedError) Error() string {
-	return e.operation + " " + e.message
+	return e.message
 }
 
 // ID implements IndexedError interface.
@@ -73,42 +76,39 @@ func (e *detailedError) Operation() string {
 }
 
 // SetDetails sets the error 'detail' and returns itself.
-func (e *detailedError) SetDetails(detail string) DetailedError {
+func (e *detailedError) SetDetails(detail string) {
 	e.details = detail
-	return e
 }
 
 // SetDetailsf sets the error's formatted detail with provided and returns itself.
-func (e *detailedError) SetDetailsf(format string, args ...interface{}) DetailedError {
+func (e *detailedError) SetDetailsf(format string, args ...interface{}) {
 	e.details = fmt.Sprintf(format, args...)
-	return e
 }
 
 // WrapDetail wraps the 'detail' for given error. Wrapping appends the new detail
 // to the front of error detail message.
-func (e *detailedError) WrapDetail(detail string) DetailedError {
-	return e.wrapDetail(detail)
+func (e *detailedError) WrapDetails(detail string) {
+	e.wrapDetail(detail)
 }
 
 // WrapDetailf wraps the detail with provided formatting for given error.
 // Wrapping appends the new detail to the front of error detail message.
-func (e *detailedError) WrapDetailf(format string, args ...interface{}) DetailedError {
-	return e.wrapDetail(fmt.Sprintf(format, args...))
+func (e *detailedError) WrapDetailsf(format string, args ...interface{}) {
+	e.wrapDetail(fmt.Sprintf(format, args...))
 }
 
-// WrapOperation wraps the 'operation' by concantinating 'e' Operation
+// AppendOperation wraps the 'operation' by concantinating 'e' Operation
 // to its value. It create a chain of operation call.
-func (e *detailedError) WrapOperation(operation string) {
-	e.operation += "#" + operation
+func (e *detailedError) AppendOperation(operation string) {
+	e.operation += "|" + operation
 }
 
-func (e *detailedError) wrapDetail(detail string) *detailedError {
+func (e *detailedError) wrapDetail(detail string) {
 	if e.details == "" {
 		e.details = detail
 	} else {
 		e.details = detail + " " + e.details
 	}
-	return e
 }
 
 func newDetailed(c Class) *detailedError {
@@ -116,11 +116,12 @@ func newDetailed(c Class) *detailedError {
 		id:    uuid.New(),
 		class: c,
 	}
-	pc, _, _, ok := runtime.Caller(1)
+	pc, _, _, ok := runtime.Caller(2)
 	details := runtime.FuncForPC(pc)
 	if ok && details != nil {
 		file, line := details.FileLine(pc)
-		err.operation = details.Name() + "@" + file + ":" + strconv.Itoa(line)
+		_, singleFile := filepath.Split(file)
+		err.operation = details.Name() + "#" + singleFile + ":" + strconv.Itoa(line)
 	}
 	return err
 }

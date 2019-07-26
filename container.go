@@ -15,20 +15,6 @@ type classContainer struct {
 	indexes [][]Index
 }
 
-func (c *classContainer) checkMajor(mjr Major) error {
-	if !mjr.Valid() {
-		return New(ClInvalidMajor, "provided invalid Major")
-	}
-	return nil
-}
-
-func (c *classContainer) checkMinor(mjr Major, mnr Minor) error {
-	if mnr.Valid() {
-		return New(ClInvalidMinor, "provided invalid Minor")
-	}
-	return nil
-}
-
 func (c *classContainer) newMajor() Major {
 	c.Lock()
 	defer c.Unlock()
@@ -74,6 +60,10 @@ func (c *classContainer) resizeMinors(mjr Major) {
 	}
 
 	size := len(c.minors) - 2
+	if size <= 0 {
+		size = 4
+	}
+
 	for size < int(mjr) {
 		size *= 2
 	}
@@ -88,6 +78,10 @@ func (c *classContainer) resizeIndexesMajor(mjr Major) {
 	}
 
 	size := len(c.indexes) - 2
+	if size <= 0 {
+		size = 4
+	}
+
 	for size < int(mjr) {
 		size *= 2
 	}
@@ -102,6 +96,10 @@ func (c *classContainer) resizeIndexesMinors(mjr Major, mnr Minor) {
 	}
 
 	size := len(c.indexes[mjr]) - 2
+	if size <= 0 {
+		size = 4
+	}
+
 	for size < int(mnr) {
 		size *= 2
 	}
