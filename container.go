@@ -27,6 +27,9 @@ func (c *classContainer) newMajor() Major {
 }
 
 func (c *classContainer) newMinor(mjr Major) (Minor, error) {
+	c.Lock()
+	defer c.Unlock()
+
 	if !mjr.Valid() {
 		return 0, New(ClInvalidMajor, "provided invalid Major")
 	}
@@ -39,6 +42,9 @@ func (c *classContainer) newMinor(mjr Major) (Minor, error) {
 }
 
 func (c *classContainer) newIndex(mjr Major, mnr Minor) (Index, error) {
+	c.Lock()
+	defer c.Unlock()
+
 	if !mjr.Valid() {
 		return 0, New(ClInvalidMajor, "provided invalid Major")
 	}
@@ -64,9 +70,10 @@ func (c *classContainer) resizeMinors(mjr Major) {
 		size = 4
 	}
 
-	for size < int(mjr) {
+	for size <= int(mjr) {
 		size *= 2
 	}
+
 	temp := make([]Minor, size)
 	copy(temp, c.minors)
 	c.minors = temp
@@ -82,7 +89,7 @@ func (c *classContainer) resizeIndexesMajor(mjr Major) {
 		size = 4
 	}
 
-	for size < int(mjr) {
+	for size <= int(mjr) {
 		size *= 2
 	}
 	temp := make([][]Index, size)
@@ -100,7 +107,7 @@ func (c *classContainer) resizeIndexesMinors(mjr Major, mnr Minor) {
 		size = 4
 	}
 
-	for size < int(mnr) {
+	for size <= int(mnr) {
 		size *= 2
 	}
 	temp := make([]Index, size)

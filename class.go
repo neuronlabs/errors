@@ -85,10 +85,35 @@ func NewClass(mjr Major, mnr Minor, index Index) (Class, error) {
 	return newClass(mjr, mnr, index)
 }
 
+// NewClassWIndex creates new index and class for provided 'mjr' Major and 'mnr' Minor.
+// Returns error if any of the input values are not valid.
+func NewClassWIndex(mjr Major, mnr Minor) (Class, error) {
+	return newClassWIndex(mjr, mnr)
+}
+
+func newClassWIndex(mjr Major, mnr Minor) (Class, error) {
+	index, err := container.newIndex(mjr, mnr)
+	if err != nil {
+		return 0, err
+	}
+	return newClass(mjr, mnr, index)
+}
+
 // MustNewClass gets new class from the provided 'minor' and 'index'.
 // Panics if any of the arguments is not valid or out of bands.
 func MustNewClass(mjr Major, mnr Minor, index Index) Class {
 	c, err := newClass(mjr, mnr, index)
+	if err != nil {
+		panic(err)
+	}
+	return c
+}
+
+// MustNewClassWIndex creates new 'mjr' Major, 'mnr' Minor 'index' and then
+// a new Class for provided triplet.
+// Panics on error.
+func MustNewClassWIndex(mjr Major, mnr Minor) Class {
+	c, err := newClassWIndex(mjr, mnr)
 	if err != nil {
 		panic(err)
 	}

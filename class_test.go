@@ -91,6 +91,7 @@ func TestClass(t *testing.T) {
 		}
 
 		assert.NotEqual(t, initLen, len(container.indexes[mjr]))
+
 	})
 
 	t.Run("Index", func(t *testing.T) {
@@ -152,6 +153,22 @@ func TestClass(t *testing.T) {
 		assert.Panics(t, func() { MustNewClass(mjr, invMnr, inx2) })
 		assert.Panics(t, func() { MustNewClass(invMjr, mnr, inx2) })
 		assert.Panics(t, func() { MustNewClass(mjr, mnr, invIndex) })
+
+		c, err := NewClassWIndex(mjr, mnr)
+		require.NoError(t, err)
+
+		var c2 Class
+
+		assert.NotPanics(t, func() { c2 = MustNewClassWIndex(mjr, mnr) })
+		assert.NotEqual(t, c, c2)
+
+		_, err = NewClassWIndex(invMjr, mnr)
+		assert.Error(t, err)
+
+		_, err = NewClassWIndex(mjr, invMnr)
+		assert.Error(t, err)
+
+		assert.Panics(t, func() { MustNewClassWIndex(invMjr, mnr) })
 	})
 }
 
