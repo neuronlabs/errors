@@ -80,7 +80,7 @@ Created by the `New` and `Newf` functions.
 ```go
 import "github.com/neuronlabs/errors"
 // let's assume we have some ClassInvalidRequest already defined.
-var ClassInvalidInput Class
+var ClassInvalidInput errors.Class
 
 func createValue(input int) error {
     if input < 0 {
@@ -117,8 +117,8 @@ import (
 )
 
 var (
-    ClInputInvalidValue Class
-    ClInputNotProvided Class
+    ClInputInvalidValue errors.Class
+    ClInputNotProvided  errors.Class
 )
 
 func init() {
@@ -162,7 +162,8 @@ func main() {
 func checkInput(input int) error {
     if input < 0 {
         err := errors.NewDet(ClassInputInvalidValue, "provided input lower than zero")        
-        return err.SetDetailf("The input value provided to the function is invalid. The value must be greater than zero.")
+        err.SetDetailf("The input value provided to the function is invalid. The value must be greater than zero.")
+        return err
     }
 
     if input > 50 {
@@ -184,7 +185,8 @@ func getInput() (int, error) {
     input, err := strconv.Atoi(os.Args[0])
     if err != nil {
         err := errors.NewDetf(ClInputInvalidValue, "provided input is not an integer")        
-        return 0, err.SetDetail(err.Error())
+        err.SetDetail(err.Error())
+        return 0, err
     }
 
     if err = checkInput(input); err != nil {
