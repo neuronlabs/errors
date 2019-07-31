@@ -46,7 +46,7 @@ It allows to create simple and detailed classified errors.
 
 ## ClassError
 
-A `ClassError` is the interface that allow provides error that returns `Class`.
+A `ClassError` is the interface that provides error classification with the`Class` method.
 
 ## DetailedError
 
