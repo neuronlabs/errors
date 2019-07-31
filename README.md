@@ -1,4 +1,6 @@
-# errors [![Go Report Card](https://goreportcard.com/badge/github.com/neuronlabs/errors)](https://goreportcard.com/report/github.com/neuronlabs/errors) [![GoDoc](https://godoc.org/github.com/neuronlabs/errors?status.svg)](https://godoc.org/github.com/neuronlabs/errors) [![Build Status](https://travis-ci.com/neuronlabs/errors.svg?branch=master)](https://travis-ci.com/neuronlabs/errors) ![License](https://img.shields.io/github/license/neuronlabs/errors.svg)
+![Neuron Logo](logo.svg)
+
+# Errors [![Go Report Card](https://goreportcard.com/badge/github.com/neuronlabs/errors)](https://goreportcard.com/report/github.com/neuronlabs/errors) [![GoDoc](https://godoc.org/github.com/neuronlabs/errors?status.svg)](https://godoc.org/github.com/neuronlabs/errors) [![Build Status](https://travis-ci.com/neuronlabs/errors.svg?branch=master)](https://travis-ci.com/neuronlabs/errors) ![License](https://img.shields.io/github/license/neuronlabs/errors.svg)
 
 Package errors contains simple golang error handling and classification primitives.
 
@@ -6,6 +8,7 @@ Package errors contains simple golang error handling and classification primitiv
 * [Interfaces](#interfaces)
 * [Error Handling](#error-handling)
 * [Example](#example)
+* [Links](#links)
 
 ## Class
 
@@ -162,13 +165,13 @@ func main() {
 func checkInput(input int) error {
     if input < 0 {
         err := errors.NewDet(ClassInputInvalidValue, "provided input lower than zero")        
-        err.SetDetailf("The input value provided to the function is invalid. The value must be greater than zero.")
+        err.SetDetailsf("The input value provided to the function is invalid. The value must be greater than zero.")
         return err
     }
 
     if input > 50 {
         err := errors.NewDetf(ClassInvalidInput, "provided input value: '%d' is not valid", input) 
-        err.SetDetailf("The input value: '%d' provided to the function is invalid. The value can't be greater than '50'.", input)
+        err.SetDetailsf("The input value: '%d' provided to the function is invalid. The value can't be greater than '50'.", input)
         return err
     }
     // do the logic here
@@ -195,3 +198,8 @@ func getInput() (int, error) {
     return input, nil
 }
 ```
+
+## Links
+
+* [Neuron-Core](https://github.com/neuronlabs/neuron-core)
+* [Docs](https://docs.neuronlabs.io)
