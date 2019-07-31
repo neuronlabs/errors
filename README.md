@@ -1,6 +1,6 @@
 ![Neuron Logo](logo.svg)
 
-# Errors [![Go Report Card](https://goreportcard.com/badge/github.com/neuronlabs/errors)](https://goreportcard.com/report/github.com/neuronlabs/errors) [![GoDoc](https://godoc.org/github.com/neuronlabs/errors?status.svg)](https://godoc.org/github.com/neuronlabs/errors) [![Build Status](https://travis-ci.com/neuronlabs/errors.svg?branch=master)](https://travis-ci.com/neuronlabs/errors) ![License](https://img.shields.io/github/license/neuronlabs/errors.svg)
+# Errors [![Go Report Card](https://goreportcard.com/badge/github.com/neuronlabs/errors)](https://goreportcard.com/report/github.com/neuronlabs/errors) [![GoDoc](https://godoc.org/github.com/neuronlabs/errors?status.svg)](https://godoc.org/github.com/neuronlabs/errors) [![Build Status](https://travis-ci.com/neuronlabs/errors.svg?branch=master)](https://travis-ci.com/neuronlabs/errors) [![Coverage Status](https://coveralls.io/repos/github/neuronlabs/errors/badge.svg?branch=master)](https://coveralls.io/github/neuronlabs/errors?branch=master) ![License](https://img.shields.io/github/license/neuronlabs/errors.svg)
 
 Package errors contains simple golang error handling and classification primitives.
 
