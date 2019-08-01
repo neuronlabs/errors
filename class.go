@@ -14,7 +14,7 @@ func init() {
 }
 
 func initClasses() {
-	internalMajor := container.newMajor()
+	internalMajor, _ := container.newMajor()
 
 	invalidMajor, _ := container.newMinor(internalMajor)
 	ClInvalidMajor = MustNewMinorClass(internalMajor, invalidMajor)

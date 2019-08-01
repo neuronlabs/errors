@@ -6,15 +6,17 @@ import (
 	"testing"
 )
 
-// TestNewSubclass tests creation of the `Major` subclassification.
+// TestClass tests creation of the `Major` subclassification.
 func TestClass(t *testing.T) {
 	t.Run("Major", func(t *testing.T) {
 		resetEmptyContainer()
 
-		firstMjr := NewMajor()
+		firstMjr, err := NewMajor()
+		require.NoError(t, err)
 		assert.Equal(t, 1, int(firstMjr))
 
-		secondMjr := NewMajor()
+		var secondMjr Major
+		assert.NotPanics(t, func() { secondMjr = MustNewMajor() })
 		assert.Equal(t, 2, int(secondMjr))
 
 		firstClass, err := NewMajorClass(firstMjr)
@@ -33,17 +35,28 @@ func TestClass(t *testing.T) {
 		indexesLen := len(container.indexes)
 		topMjr := container.major
 		for i := 0; i < 20; i++ {
-			NewMajor()
+			_, err := NewMajor()
+			require.NoError(t, err)
 		}
 		assert.NotEqual(t, minorsLen, len(container.minors))
 		assert.NotEqual(t, indexesLen, len(container.indexes))
 		assert.Equal(t, topMjr+20, container.major)
+
+		// on testing purpose change top major to max uint8 value.
+		maxMajor := Major((2 << 7) - 1)
+		container.major = maxMajor
+
+		_, err = NewMajor()
+		require.Error(t, err)
+
+		assert.Panics(t, func() { MustNewMajor() })
 	})
 
 	t.Run("Minor", func(t *testing.T) {
 		resetEmptyContainer()
 
-		mjr := NewMajor()
+		mjr, err := NewMajor()
+		require.NoError(t, err)
 		assert.Equal(t, 1, int(mjr))
 
 		mnr1, err := NewMinor(mjr)
@@ -92,12 +105,18 @@ func TestClass(t *testing.T) {
 
 		assert.NotEqual(t, initLen, len(container.indexes[mjr]))
 
+		container.minors[mjr] = maxMinorValue
+		_, err = NewMinor(mjr)
+		require.Error(t, err)
+
+		assert.Panics(t, func() { MustNewMinor(mjr) })
 	})
 
 	t.Run("Index", func(t *testing.T) {
 		resetEmptyContainer()
 
-		mjr := NewMajor()
+		mjr, err := NewMajor()
+		require.NoError(t, err)
 		assert.True(t, mjr.Valid())
 
 		mnr, err := NewMinor(mjr)
@@ -169,6 +188,12 @@ func TestClass(t *testing.T) {
 		assert.Error(t, err)
 
 		assert.Panics(t, func() { MustNewClassWIndex(invMjr, mnr) })
+
+		container.indexes[mjr][mnr] = maxIndexValue
+		_, err = NewIndex(mjr, mnr)
+
+		require.Error(t, err)
+		assert.Panics(t, func() { MustNewIndex(mjr, mnr) })
 	})
 }
 
