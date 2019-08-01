@@ -35,7 +35,8 @@ func TestClass(t *testing.T) {
 		indexesLen := len(container.indexes)
 		topMjr := container.major
 		for i := 0; i < 20; i++ {
-			NewMajor()
+			_, err := NewMajor()
+			require.NoError(t, err)
 		}
 		assert.NotEqual(t, minorsLen, len(container.minors))
 		assert.NotEqual(t, indexesLen, len(container.indexes))
