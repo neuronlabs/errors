@@ -15,15 +15,18 @@ type classContainer struct {
 	indexes [][]Index
 }
 
-func (c *classContainer) newMajor() Major {
+func (c *classContainer) newMajor() (Major, error) {
 	c.Lock()
 	defer c.Unlock()
 
+	if c.major+1 == 0 {
+		return 0, New(ClInvalidMajor, "reached maximum number of 'Major' classes")
+	}
 	c.major++
 
 	c.resizeMinors(c.major)
 	c.resizeIndexesMajor(c.major)
-	return c.major
+	return c.major, nil
 }
 
 func (c *classContainer) newMinor(mjr Major) (Minor, error) {
@@ -36,7 +39,11 @@ func (c *classContainer) newMinor(mjr Major) (Minor, error) {
 
 	c.resizeMinors(mjr)
 
+	if c.minors[mjr] == maxMinorValue {
+		return 0, Newf(ClInvalidMinor, "created maximum number of minors for major: '%d'", mjr)
+	}
 	c.minors[mjr]++
+
 	c.resizeIndexesMinors(mjr, c.minors[mjr])
 	return c.minors[mjr], nil
 }
@@ -56,6 +63,9 @@ func (c *classContainer) newIndex(mjr Major, mnr Minor) (Index, error) {
 	c.resizeIndexesMajor(mjr)
 	c.resizeIndexesMinors(mjr, mnr)
 
+	if c.indexes[mjr][mnr] == maxIndexValue {
+		return 0, Newf(ClInvalidIndex, "reached maximum index subclass number for mjr: '%d', mnr: '%d'", mjr, mnr)
+	}
 	c.indexes[mjr][mnr]++
 	return c.indexes[mjr][mnr], nil
 }

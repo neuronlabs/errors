@@ -11,8 +11,18 @@ func (m Major) Valid() bool {
 }
 
 // NewMajor creates new Major classification.
-func NewMajor() Major {
+func NewMajor() (Major, error) {
 	return container.newMajor()
+}
+
+// MustNewMajor creates new major error classification.
+// Panics if reached maximum number of possible majors.
+func MustNewMajor() Major {
+	mjr, err := container.newMajor()
+	if err != nil {
+		panic(err)
+	}
+	return mjr
 }
 
 // Minor is mid level error subclassification.
