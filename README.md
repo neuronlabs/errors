@@ -2,7 +2,7 @@
 
 # Errors [![Go Report Card](https://goreportcard.com/badge/github.com/neuronlabs/errors)](https://goreportcard.com/report/github.com/neuronlabs/errors) [![GoDoc](https://godoc.org/github.com/neuronlabs/errors?status.svg)](https://godoc.org/github.com/neuronlabs/errors) [![Build Status](https://travis-ci.com/neuronlabs/errors.svg?branch=master)](https://travis-ci.com/neuronlabs/errors) [![Coverage Status](https://coveralls.io/repos/github/neuronlabs/errors/badge.svg?branch=master)](https://coveralls.io/github/neuronlabs/errors?branch=master) ![License](https://img.shields.io/github/license/neuronlabs/errors.svg)
 
-Package errors contains simple golang error handling and classification primitives.
+Package errors provides simple golang error and classification primitives.
 
 * [Class](#class)
 * [Interfaces](#interfaces)
@@ -32,7 +32,7 @@ with the same logic but different messages.
 A class might be composed in three different ways:
 
 * Major only - the class is Major singleton.
-* Major, Minor only - classes that doesn't need triple subclassification divison.
+* Major, Minor only - classes that don't need triple subclassification divison.
 * Major, Minor, Index - classes that decomposes 
 
 Use `NewMajor` or `MustNewMajor` functions to create `Major`, `NewMinor` or `MustNewMinor` for new `Minor` and `NewIndex` or `MustNewIndex` for new `Index`.
@@ -46,7 +46,7 @@ It allows to create simple and detailed classified errors.
 
 ## ClassError
 
-A `ClassError` is the interface that allow provides error that returns `Class`.
+A `ClassError` is the interface that provides error classification with the`Class` method.
 
 ## DetailedError
 
@@ -116,6 +116,7 @@ In order to create detailed error use the `NewDet` or `NewDetf` functions.
 import (
     "fmt"
     "os"
+
     "github.com/neuronlabs/errors"
 )
 
@@ -129,7 +130,7 @@ func init() {
 }
 
 func initClasses() {
-    inputMjr := errors.NewMajor()
+    inputMjr := errors.MustNewMajor()
     invalidValueMnr := errors.MustNewMinor(inputMjr)
     ClInputInvalidValue = errors.MustNewMinorClass(inputMjr, invalidValueMnr)
     
@@ -140,25 +141,27 @@ func initClasses() {
 
 func main() {
     input, err := getInput()
-    if err != nil {
-        classed, ok := err.(errors.ClassError)
-        if ok {
-            if classed.Class() == ClInputNotProvided {
-                fmt.Println("No required integer arguments provided.")
-            }
+    if err == nil {
+        // Everything is fine.
+        os.Exit(0)
+    }
+
+    if classed, ok := err.(errors.ClassError); ok {
+        if classed.Class() == ClInputNotProvided {
+            fmt.Println("No required integer arguments provided.")
             os.Exit(1)
         }
-
-        var details string
-        detailed, ok := err.(errors.DetailedError)
-        if ok {
-            details = detailed.Details()
-        } else {
-            details = err.Error()
-        }
-        fmt.Printf("Invalid input value provided: '%s'\n", details)
-        os.Exit(1)    
     }
+
+    var details string
+    detailed, ok := err.(errors.DetailedError)
+    if ok {
+        details = detailed.Details()
+    } else {
+        details = err.Error()
+    }
+    fmt.Printf("Invalid input value provided: '%s'\n", details)
+    os.Exit(1)    
 }
 
 
@@ -202,4 +205,4 @@ func getInput() (int, error) {
 ## Links
 
 * [Neuron-Core](https://github.com/neuronlabs/neuron-core)
-* [Docs](https://docs.neuronlabs.io)
+* [Docs](https://docs.neuronlabs.io/errors)
